@@ -21,7 +21,6 @@ class CodenamesMenu(ButtonMenuMixin, menus.Menu):
         self.color = color
         self.num = 1
         self.message = None
-        log.error("Initializing game")
         super().__init__(timeout=60, delete_message_after=False, clear_reactions_after=True)
 
     async def update(self, button):
@@ -92,7 +91,7 @@ class CodenamesMenu(ButtonMenuMixin, menus.Menu):
 
     def _get_components(self) -> List[Component]:
         components = []
-        print("Getting components. State: %s" % self.game.state)
+        log.error("Getting components. State: %s" % self.game.state)
         if self.game.state == GameState.LOBBY:
             components.append(Component(components=self._get_lobby_buttons()))
         elif self.game.state == GameState.PLAYING:
