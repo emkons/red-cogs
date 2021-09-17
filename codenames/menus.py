@@ -63,7 +63,7 @@ class CodenamesMenu(ButtonMenuMixin, menus.Menu):
             Button(style=1, custom_id=f"{self.custom_id}-blueSpy", label="Become Spymaster", emoji=None),
             Button(style=4, custom_id=f"{self.custom_id}-redJoin", label="Join Red", emoji=None),
             Button(style=4, custom_id=f"{self.custom_id}-redSpy", label="Become Spymaster", emoji=None),
-            Button(style=3, custom_id=f"{self.custom_id}-start", label="Start", emoji=None),
+            Button(style=3, custom_id=f"{self.custom_id}-begin", label="Start", emoji=None),
         ]
     
     def _get_game_buttons(self) -> List[Component]:
@@ -121,9 +121,9 @@ class CodenamesMenu(ButtonMenuMixin, menus.Menu):
         print('redSpy')
         await self.send_current_state(payload)
 
-    @menus.button('start')
-    async def start(self, payload: discord.RawReactionActionEvent):
-        print('start')
+    @menus.button('begin')
+    async def begin(self, payload: discord.RawReactionActionEvent):
+        print('begin')
         await self.send_current_state(payload)
 
     async def send_current_state(self, payload):
