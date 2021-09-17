@@ -21,7 +21,7 @@ class CodenamesMenu(ButtonMenuMixin, menus.Menu):
         self.color = color
         self.num = 1
         self.message = None
-        print("Initializing game")
+        log.error("Initializing game")
         super().__init__(timeout=60, delete_message_after=False, clear_reactions_after=True)
 
     async def update(self, button):
