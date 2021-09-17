@@ -1,3 +1,4 @@
+import os
 import random
 from enum import Enum
 
@@ -34,7 +35,7 @@ class CodenamesGame:
         self.state = None
 
     def import_words(self):
-        with open('./data/words.txt', 'r') as f:
+        with open(os.path.join(os.path.dirname(__file__), 'data/words.txt'), 'r') as f:
             self.wordlist = f.readlines()
             print(self.wordlist)
 
