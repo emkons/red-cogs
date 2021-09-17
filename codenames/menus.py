@@ -78,8 +78,8 @@ class CodenamesMenu(ButtonMenuMixin, menus.Menu):
         for word in self.game.words:
             buttons.append(Button(
                 style=(ButtonStyle(2) if word not in self.game.revealed_words else 
-                ButtonStyle(1) if word in self.game.words[Team.BLUE] else 
-                ButtonStyle(4) if word in self.gaem.words[Team.RED] else ButtonStyle(2)),
+                ButtonStyle(1) if word in self.game.team_words[Team.BLUE] else 
+                ButtonStyle(4) if word in self.game.team_words[Team.RED] else ButtonStyle(2)),
                 custom_id=f"{self.custom_id}-word-{word}",
                 label=word,
                 disabled=(True if word in self.game.revealed_words else False)
