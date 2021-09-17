@@ -1,4 +1,6 @@
 {
-    "author":"emkons",
+    "author":[
+        "emkons"
+    ],
     "description":"Run codenames game"
 }

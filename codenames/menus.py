@@ -25,11 +25,11 @@ class CodenamesMenu(menus.Menu):
 
     def _get_lobby_buttons(self) -> List[Component]:
         return [
-            Button(style=1, custom_id=f"{self.custom_id}-blueJoin", label="Join Blue"),
-            Button(style=1, custom_id=f"{self.custom_id}-blueSpy", label="Become Spymaster"),
-            Button(style=4, custom_id=f"{self.custom_id}-redJoin", label="Join Red"),
-            Button(style=4, custom_id=f"{self.custom_id}-redSpy", label="Become Spymaster"),
-            Button(style=3, custom_id=f"{self.custom_id}-start", label="Start"),
+            Button(style=1, custom_id=f"{self.custom_id}-blueJoin", label="Join Blue", emoji=None),
+            Button(style=1, custom_id=f"{self.custom_id}-blueSpy", label="Become Spymaster", emoji=None),
+            Button(style=4, custom_id=f"{self.custom_id}-redJoin", label="Join Red", emoji=None),
+            Button(style=4, custom_id=f"{self.custom_id}-redSpy", label="Become Spymaster", emoji=None),
+            Button(style=3, custom_id=f"{self.custom_id}-start", label="Start", emoji=None),
         ]
     
     def _get_game_buttons(self) -> List[Component]:

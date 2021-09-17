@@ -36,8 +36,7 @@ class CodenamesGame:
 
     def import_words(self):
         with open(os.path.join(os.path.dirname(__file__), 'data/words.txt'), 'r') as f:
-            self.wordlist = f.readlines()
-            print(self.wordlist)
+            self.wordlist = [word.strip() for word in f.readlines()]
 
 
     async def start_game(self):
