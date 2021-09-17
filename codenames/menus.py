@@ -91,7 +91,7 @@ class CodenamesMenu(ButtonMenuMixin, menus.Menu):
 
     def _get_components(self) -> List[Component]:
         components = []
-        log.debug("Getting components. State: %s" % self.game.state)
+        log.info("Getting components. State: %s" % self.game.state)
         if self.game.state == GameState.LOBBY:
             components.append(Component(components=self._get_lobby_buttons()))
         elif self.game.state == GameState.PLAYING:
