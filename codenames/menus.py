@@ -15,13 +15,17 @@ try:
 except ImportError:
     pass
 
-class CodenamesMenu(menus.Menu):
+class CodenamesMenu(ButtonMenuMixin, menus.Menu):
     def __init__(self, game: CodenamesGame, color: discord.Color):
         self.game = game
         self.color = color
         self.num = 1
         self.message = None
         super().__init__(timeout=60, delete_message_after=False, clear_reactions_after=True)
+    
+    def _get_emoji(self, button: InteractionButton):
+        emoji_string = button.custom_id[len(self.custom_id) + 1 :].split('-')[0]
+        return menus._cast_emoji(emoji_string)
 
     async def send_initial_message(self, ctx: commands.Context, channel: discord.TextChannel):
         return await channel.send(embed=self.current_state_embed())
@@ -150,13 +154,8 @@ class CodenamesMenu(menus.Menu):
 
 
 def get_menu():
-    
-    class CodenamesButtonMixin(ButtonMenuMixin):
-        def _get_emoji(self, button: InteractionButton):
-            emoji_string = button.custom_id[len(self.custom_id) + 1 :].split('-')[0]
-            return menus._cast_emoji(emoji_string)
 
-    class CodenamesButtonMenu(CodenamesButtonMixin, CodenamesMenu):
+    class CodenamesButtonMenu(CodenamesMenu):
         async def update(self, button):
             await button.defer_update()
             await super().update(button)
