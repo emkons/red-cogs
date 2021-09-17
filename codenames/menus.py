@@ -54,9 +54,6 @@ class CodenamesMenu(ButtonMenuMixin, menus.Menu):
         emoji_string = button.custom_id[len(self.custom_id) + 1 :].split('-')[0]
         return menus._cast_emoji(emoji_string)
 
-    async def send_initial_message(self, ctx: commands.Context, channel: discord.TextChannel):
-        return await channel.send(embed=self.current_state_embed())
-
     def _get_lobby_buttons(self) -> List[Component]:
         return [
             Button(style=1, custom_id=f"{self.custom_id}-blueJoin", label="Join Blue", emoji=None),
@@ -130,9 +127,6 @@ class CodenamesMenu(ButtonMenuMixin, menus.Menu):
     async def send_current_state(self, payload):
         await self.edit(payload, embed=self.current_state_embed())
 
-    async def send(self, payload, content: str = None, **kwargs):
-        await self.ctx.send(content, **kwargs)
-
     def current_state_embed(self):
         if self.game.state == GameState.LOBBY:
             return self.lobby_embed()
@@ -165,22 +159,11 @@ class CodenamesMenu(ButtonMenuMixin, menus.Menu):
         )
         return e
 
-    async def edit(self, payload, **kwargs):
-        await self.message.edit(embed=self.current_state_embed())
-
     async def finalize(self, timed_out: bool):
         if timed_out:
             await self.edit_or_send(
                 None, content="Akinator game timed out.", embed=None, components=[]
             )
-
-    async def edit_or_send(self, payload, **kwargs):
-        try:
-            await self.message.edit(**kwargs)
-        except discord.NotFound:
-            await self.ctx.send(**kwargs)
-        except discord.Forbidden:
-            pass
 
 
 
