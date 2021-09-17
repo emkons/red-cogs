@@ -131,6 +131,12 @@ class CodenamesMenu(ButtonMenuMixin, menus.Menu):
     async def begin(self, payload: discord.RawReactionActionEvent):
         await self.game.begin_game()
         await self.send_current_state(payload)
+    
+    @menus.button('word')
+    async def word(self, payload: discord.RawReactionActionEvent):
+        word = payload.custom_id[len(self.custom_id) + 1 :].split('-')[1]
+        await self.game.reveal(payload.user_id, word)
+        await self.send_current_state(payload)
 
     async def send_current_state(self, payload):
         await self.edit(payload, embed=self.current_state_embed())
