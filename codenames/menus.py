@@ -11,9 +11,17 @@ from .game import CodenamesGame, GameState, Team
 log = logging.getLogger(__name__)
 
 try:
-    from slashtags import Button, ButtonMenuMixin, ButtonStyle, Component, InteractionButton, chunks
+    from slashtags import Button, ButtonMenuMixin, ButtonStyle, Component, InteractionButton
 except ImportError:
     pass
+
+def chunks(l, n):
+    """
+    Yield successive n-sized chunks from l.
+    from https://github.com/flaree/flare-cogs/blob/bf629ec6d8c28519bf08256b2f5132a216d1671e/commandstats/commandstats.py#L17
+    """
+    for i in range(0, len(l), n):
+        yield l[i : i + n]
 
 class CodenamesMenu(ButtonMenuMixin, menus.Menu):
     def __init__(self, game: CodenamesGame, color: discord.Color):
