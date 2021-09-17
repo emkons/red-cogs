@@ -32,7 +32,7 @@ class CodenamesMenu(ButtonMenuMixin, menus.Menu):
         return await self._send(ctx, embed=self.current_state_embed())
 
     async def edit(self, button, **kwargs):
-        await button.update(embed=self.current_state_embed())
+        await button.update(embed=self.current_state_embed(), componenets=self._get_components())
 
     async def send(self, button, content: str = None, **kwargs):
         await button.send(content, **kwargs)
