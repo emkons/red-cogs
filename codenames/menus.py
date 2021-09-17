@@ -126,6 +126,9 @@ class CodenamesMenu(ButtonMenuMixin, menus.Menu):
         print('start')
         await self.send_current_state(payload)
 
+    async def send_current_state(self, payload):
+        await self.edit(payload, embed=self.current_question_embed())
+
     async def send(self, payload, content: str = None, **kwargs):
         await self.ctx.send(content, **kwargs)
 
