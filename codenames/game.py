@@ -11,6 +11,9 @@ class GameState(Enum):
     PLAYING = 1
     ENDED = 2
 
+def other_team(team: Team) -> Team:
+    return Team.BLUE if team == Team.RED else Team.RED
+
 class CodenamesGame:
 
     def __init__(self) -> None:
@@ -77,11 +80,11 @@ class CodenamesGame:
         if not player in self.teams[team]:
             self.teams[team].append(player)
 
-        if player in self.teams[(team + 1) % 2]:
-            self.teams[(team + 1) % 2].remove(player)
+        if player in self.teams[other_team(team)]:
+            self.teams[other_team(team)].remove(player)
 
-        if player == self.spymasters[(team + 1) % 2]:
-            self.spymasters[(team + 1) % 2] = None
+        if player == self.spymasters[other_team(team)]:
+            self.spymasters[other_team(team)] = None
     
     async def become_spymaster(self, player, team: Team) -> None:
         if not player in self.teams[team]:
@@ -104,13 +107,13 @@ class CodenamesGame:
                 return self.end_game(team)
             return # Correct guess
             
-        if word in self.team_words[(team + 1) % 2]:
-            if self.check_guessed_all((team + 1) % 2):
-                return self.end_game((team + 1) % 2)
+        if word in self.team_words[other_team(team)]:
+            if self.check_guessed_all(other_team(team)):
+                return self.end_game(other_team(team))
             return self.end_turn() # Incorrect guess, end turn
         
         if word == self.black_word:
-            return self.end_game((team + 1) % 2) # End game with loss
+            return self.end_game(other_team(team)) # End game with loss
     
     async def check_guessed_all(self, team: Team) -> bool:
         intersect = [x for x in self.revealed_words if x in self.team_words[team]]
