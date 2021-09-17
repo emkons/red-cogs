@@ -1,4 +1,5 @@
 
+import logging
 import discord
 from redbot.core import commands
 from redbot.vendored.discord.ext import menus
@@ -6,6 +7,8 @@ from redbot.vendored.discord.ext import menus
 from typing import List
 
 from .game import CodenamesGame, GameState, Team
+
+log = logging.getLogger(__name__)
 
 try:
     from slashtags import Button, ButtonMenuMixin, ButtonStyle, Component, InteractionButton, chunks
@@ -64,6 +67,7 @@ class CodenamesMenu(menus.Menu):
         elif self.game.state == GameState.ENDED:
             components = []
 
+        log.debug(components)
         return components
 
     @menus.button('blueJoin')
