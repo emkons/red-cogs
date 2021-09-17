@@ -89,8 +89,8 @@ class CodenamesGame:
         self.spymasters[team] = player
     
     async def reveal(self, player, word) -> Team:
-        if not player in self.teams[self.current_team]:
-            return # Wrong team
+        # if not player in self.teams[self.current_team]:
+        #     return # Wrong team
         
         team = Team.RED if player in self.teams[Team.RED] else Team.BLUE
         
