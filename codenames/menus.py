@@ -56,11 +56,11 @@ class CodenamesMenu(ButtonMenuMixin, menus.Menu):
 
     def _get_lobby_buttons(self) -> List[Component]:
         return [
-            Button(style=1, custom_id=f"{self.custom_id}-blueJoin", label="Join Blue", emoji=None),
-            Button(style=1, custom_id=f"{self.custom_id}-blueSpy", label="Become Spymaster", emoji=None),
-            Button(style=4, custom_id=f"{self.custom_id}-redJoin", label="Join Red", emoji=None),
-            Button(style=4, custom_id=f"{self.custom_id}-redSpy", label="Become Spymaster", emoji=None),
-            Button(style=3, custom_id=f"{self.custom_id}-begin", label="Start", emoji=None),
+            Button(style=ButtonStyle(1), custom_id=f"{self.custom_id}-blueJoin", label="Join Blue", emoji=None),
+            Button(style=ButtonStyle(1), custom_id=f"{self.custom_id}-blueSpy", label="Become Spymaster", emoji=None),
+            Button(style=ButtonStyle(4), custom_id=f"{self.custom_id}-redJoin", label="Join Red", emoji=None),
+            Button(style=ButtonStyle(4), custom_id=f"{self.custom_id}-redSpy", label="Become Spymaster", emoji=None),
+            Button(style=ButtonStyle(3), custom_id=f"{self.custom_id}-begin", label="Start", emoji=None),
         ]
     
     def _get_game_buttons(self) -> List[Component]:
@@ -69,9 +69,9 @@ class CodenamesMenu(ButtonMenuMixin, menus.Menu):
         self.game.revealed_words
         for word in self.game.words:
             buttons.append(Button(
-                style=(2 if word not in self.game.revealed_words else 
-                1 if word in self.game.words[Team.BLUE] else 
-                4 if word in self.gaem.words[Team.RED] else 2),
+                style=(ButtonStyle(2) if word not in self.game.revealed_words else 
+                ButtonStyle(1) if word in self.game.words[Team.BLUE] else 
+                ButtonStyle(4) if word in self.gaem.words[Team.RED] else ButtonStyle(2)),
                 custom_id=f"{self.custom_id}-word-{word}",
                 label=word,
                 disabled=(True if word in self.game.revealed_words else False)
@@ -81,8 +81,8 @@ class CodenamesMenu(ButtonMenuMixin, menus.Menu):
             components.append(Component(components=button_chunk))
         
         components.append(Component(components=[
-            Button(style=3, custom_id=f"{self.custom_id}-endTurn"),
-            Button(style=3, custom_id=f"{self.custom_id}-spyShow")
+            Button(style=ButtonStyle(3), custom_id=f"{self.custom_id}-endTurn"),
+            Button(style=ButtonStyle(3), custom_id=f"{self.custom_id}-spyShow")
         ]))
         return components
 
