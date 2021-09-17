@@ -121,7 +121,7 @@ class CodenamesMenu(ButtonMenuMixin, menus.Menu):
 
     @menus.button('begin')
     async def begin(self, payload: discord.RawReactionActionEvent):
-        print('begin')
+        await self.game.begin_game()
         await self.send_current_state(payload)
 
     async def send_current_state(self, payload):
