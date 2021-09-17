@@ -22,6 +22,33 @@ class CodenamesMenu(ButtonMenuMixin, menus.Menu):
         self.num = 1
         self.message = None
         super().__init__(timeout=60, delete_message_after=False, clear_reactions_after=True)
+
+    async def update(self, button):
+            await button.defer_update()
+            await super().update(button)
+
+    async def send_initial_message(self, ctx: commands.Context, channel: discord.TextChannel):
+        self.custom_id = str(ctx.message.id)
+        return await self._send(ctx, embed=self.current_state_embed())
+
+    async def edit(self, button, **kwargs):
+        await button.update(embed=self.current_state_embed())
+
+    async def send(self, button, content: str = None, **kwargs):
+        await button.send(content, **kwargs)
+
+    async def edit_or_send(self, button, **kwargs):
+        try:
+            if button:
+                await button.update(**kwargs)
+            else:
+                if kwargs.pop("components", None) == []:
+                    await self._edit_message_components([])
+                await self.message.edit(**kwargs)
+        except discord.NotFound:
+            await self.ctx.send(**kwargs)
+        except discord.Forbidden:
+            pass
     
     def _get_emoji(self, button: InteractionButton):
         emoji_string = button.custom_id[len(self.custom_id) + 1 :].split('-')[0]
@@ -155,32 +182,5 @@ class CodenamesMenu(ButtonMenuMixin, menus.Menu):
 
 def get_menu():
 
-    class CodenamesButtonMenu(CodenamesMenu):
-        async def update(self, button):
-            await button.defer_update()
-            await super().update(button)
 
-        async def send_initial_message(self, ctx: commands.Context, channel: discord.TextChannel):
-            self.custom_id = str(ctx.message.id)
-            return await self._send(ctx, embed=self.current_state_embed())
-
-        async def edit(self, button, **kwargs):
-            await button.update(embed=self.current_state_embed())
-
-        async def send(self, button, content: str = None, **kwargs):
-            await button.send(content, **kwargs)
-
-        async def edit_or_send(self, button, **kwargs):
-            try:
-                if button:
-                    await button.update(**kwargs)
-                else:
-                    if kwargs.pop("components", None) == []:
-                        await self._edit_message_components([])
-                    await self.message.edit(**kwargs)
-            except discord.NotFound:
-                await self.ctx.send(**kwargs)
-            except discord.Forbidden:
-                pass
-
-    return CodenamesButtonMenu
+    return CodenamesMenu
