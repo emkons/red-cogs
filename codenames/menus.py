@@ -88,10 +88,10 @@ class CodenamesMenu(ButtonMenuMixin, menus.Menu):
         for button_chunk in chunks(buttons, 5):
             components.append(Component(components=button_chunk))
         
-        components.append(Component(components=[
-            Button(style=ButtonStyle(3), custom_id=f"{self.custom_id}-endTurn"),
-            Button(style=ButtonStyle(3), custom_id=f"{self.custom_id}-spyShow")
-        ]))
+        # components.append(Component(components=[
+        #     Button(style=ButtonStyle(3), custom_id=f"{self.custom_id}-endTurn"),
+        #     Button(style=ButtonStyle(3), custom_id=f"{self.custom_id}-spyShow")
+        # ]))
         return components
 
     def _get_components(self) -> List[Component]:
