@@ -103,7 +103,6 @@ class Minecraft(commands.Cog):
             title=f"{server.host}:{server.port}",
             description=chat.box(await self.clear_mcformatting(status.description)),
             color=discord.Colour(0x00ff00),
-            footer="Last updated {0}".format(datetime.datetime.now().ctime())
         )
         embed.add_field(name="Latency", value=f"{status.latency} ms")
         embed.add_field(
@@ -129,6 +128,7 @@ class Minecraft(commands.Cog):
             ),
             inline=False
         )
+        embed.set_footer(text="Last updated {0}".format(datetime.datetime.now().ctime()))
         return embed
 
     async def clear_mcformatting(self, formatted_str) -> str:
