@@ -71,7 +71,7 @@ class Minecraft(commands.Cog):
         embed = await self.create_embed(server_ip)
         message = await ctx.send(embed=embed) # type: discord.Message
         await self.config.guild(ctx.guild).message.set(message.id)
-        await self.config.guild(ctx.guild).channel.set(message.channel)
+        await self.config.guild(ctx.guild).channel.set(message.channel.id)
         await self.config.guild(ctx.guild).server_ip.set(server_ip)
 
     async def create_embed(self, server_ip):
