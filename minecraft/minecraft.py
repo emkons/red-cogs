@@ -30,7 +30,7 @@ class Minecraft(commands.Cog):
         await self.bot.wait_until_ready()
         while True:
             await asyncio.sleep(datetime.timedelta(minutes=1).total_seconds())
-            await self.update_loop()
+            await self.message_updater()
 
     @commands.group()
     async def minecraft(self, ctx):
@@ -128,6 +128,7 @@ class Minecraft(commands.Cog):
             ),
             inline=False
         )
+        embed.footer = "Last updated {0}".format(datetime.datetime.now().ctime())
         return embed
 
     async def clear_mcformatting(self, formatted_str) -> str:
