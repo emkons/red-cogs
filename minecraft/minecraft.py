@@ -62,6 +62,10 @@ class Minecraft(commands.Cog):
             embed.set_thumbnail(url="attachment://icon.png")
         embed.add_field(name="Latency", value=f"{status.latency} ms")
         embed.add_field(
+            name="Version",
+            value="{}\nProtocol: {}".format(status.version.name, status.version.protocol),
+        )
+        embed.add_field(
             name="Players",
             value="{0.players.online}/{0.players.max}\n{1}".format(
                 status,
@@ -78,10 +82,7 @@ class Minecraft(commands.Cog):
                 if status.players.sample
                 else "",
             ),
-        )
-        embed.add_field(
-            name="Version",
-            value="{}\nProtocol: {}".format(status.version.name, status.version.protocol),
+            inline=False
         )
         await ctx.send(file=icon, embed=embed)
         if icon_file:
