@@ -58,7 +58,7 @@ class Minecraft(commands.Cog):
                     log.debug("Server ip npt set")
                     continue
                 embed = await self.create_embed(server_ip)
-                message.edit(embed=embed)
+                await message.edit(embed=embed)
             except Exception as e:
                 log.exception(e)
         pass
