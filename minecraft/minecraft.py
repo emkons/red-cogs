@@ -12,6 +12,11 @@ from redbot.core.utils import chat_formatting as chat
 
 class Minecraft(commands.Cog):
 
+    __version__ = "0.0.1"
+
+    def __init__(self, bot: Red) -> None:
+        self.bot = bot
+
     @commands.group()
     async def minecraft(self, ctx):
         """Get Minecraft-Related data"""
