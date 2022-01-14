@@ -128,7 +128,6 @@ class Minecraft(commands.Cog):
             ),
             inline=False
         )
-        embed.set_footer(text="Last updated {0}".format(datetime.datetime.now().ctime()))
         return embed
 
     async def clear_mcformatting(self, formatted_str) -> str:
