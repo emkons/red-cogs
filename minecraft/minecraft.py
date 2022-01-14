@@ -1,3 +1,4 @@
+import re
 import base64
 import logging
 import discord
@@ -59,9 +60,9 @@ class Minecraft(commands.Cog):
         )
         if icon:
             embed.set_thumbnail(url="attachment://icon.png")
-        embed.add_field(name=_("Latency"), value=f"{status.latency} ms")
+        embed.add_field(name="Latency", value=f"{status.latency} ms")
         embed.add_field(
-            name=_("Players"),
+            name="Players",
             value="{0.players.online}/{0.players.max}\n{1}".format(
                 status,
                 chat.box(
@@ -105,3 +106,26 @@ class Minecraft(commands.Cog):
         #         # f"Plugins: {query.software.plugins}"
         #     )
         #     await msg.edit(embed=embed)
+
+    async def clear_mcformatting(self, formatted_str) -> str:
+        """Remove Minecraft-formatting"""
+        if not isinstance(formatted_str, dict):
+            return re.sub(r"\xA7[0-9A-FK-OR]", "", formatted_str, flags=re.IGNORECASE)
+        clean = ""
+        async for text in self.gen_dict_extract("text", formatted_str):
+            clean += text
+        return re.sub(r"\xA7[0-9A-FK-OR]", "", clean, flags=re.IGNORECASE)
+    
+    async def gen_dict_extract(self, key: str, var: dict):
+        if not hasattr(var, "items"):
+            return
+        for k, v in var.items():
+            if k == key:
+                yield v
+            if isinstance(v, dict):
+                async for result in self.gen_dict_extract(key, v):
+                    yield result
+            elif isinstance(v, list):
+                for d in v:
+                    async for result in self.gen_dict_extract(key, d):
+                        yield result
