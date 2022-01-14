@@ -1,0 +1,9 @@
+{
+    "author":[
+        "emkons"
+    ],
+    "description":"Get live status from minecraft server",
+    "requirements": [
+        "mcstatus>=5.1.1"
+    ]
+}
