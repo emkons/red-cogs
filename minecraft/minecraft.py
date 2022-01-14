@@ -1,15 +1,20 @@
 import re
 import base64
 import logging
+import datetime
 import discord
+import asyncio
 from asyncio import TimeoutError as AsyncTimeoutError
 from io import BytesIO
 
 from mcstatus import MinecraftServer
 
 from redbot.core import commands
+from redbot.core.config import Config
 from redbot.core.bot import Red
 from redbot.core.utils import chat_formatting as chat
+
+log = logging.getLogger("red.emkons.minecraft")
 
 class Minecraft(commands.Cog):
 
@@ -17,10 +22,45 @@ class Minecraft(commands.Cog):
 
     def __init__(self, bot: Red) -> None:
         self.bot = bot
+        self.config = Config.get_conf(self, identifier=0xd3eeeabdcf06d6744c5bc496fa26fd65)
+        self.config.register_guild(channel = None, message=None, server_ip = None)
+        self.loop = self.bot.loop.create_task(self.update_loop())
+
+    async def update_loop(self):
+        await self.bot.wait_until_ready()
+        while True:
+            await asyncio.sleep(datetime.timedelta(minutes=1).total_seconds())
+            await self.update_loop()
 
     @commands.group()
     async def minecraft(self, ctx):
         """Get Minecraft-Related data"""
+        pass
+
+    async def message_updater(self):
+        data = await self.config.all_guilds()
+        for guild_id in data:
+            try:
+                guild = self.bot.get_guild(int(guild_id)) # type: discord.Guild
+                if guild is None:
+                    log.debug("Guild %d not found", guild)
+                    continue
+                channel = guild.get_channel(data[guild_id]['channel']) # type: discord.TextChannel
+                if channel is None:
+                    log.debug("Channel %d not found", channel)
+                    continue
+                message = channel.fetch_message(data[guild_id]['message']) # type: discord.Message
+                if message is None:
+                    log.debug("Message %d not found", message)
+                    continue
+                server_ip = data[guild_id]['server_ip']
+                if server_ip is None:
+                    log.debug("Server ip npt set")
+                    continue
+                embed = await self.create_embed(server_ip)
+                message.edit(embed=embed)
+            except Exception as e:
+                log.exception(e)
         pass
 
     @minecraft.command(usage="<server IP>[:port]")
@@ -28,38 +68,42 @@ class Minecraft(commands.Cog):
     @commands.admin()
     async def server(self, ctx, server_ip: str):
         """Get info about server"""
+        embed = await self.create_embed(server_ip)
+        message = await ctx.send(embed=embed) # type: discord.Message
+        await self.config.guild(ctx.guild).message.set(message.id)
+        await self.config.guild(ctx.guild).channel.set(message.channel)
+        await self.config.guild(ctx.guild).server_ip.set(server_ip)
+
+    async def create_embed(self, server_ip):
+        error_embed = discord.Embed(
+            title="",
+            color=discord.Colour(0x00ff00)
+        )
         try:
             server: MinecraftServer = await self.bot.loop.run_in_executor(
                 None, MinecraftServer.lookup, server_ip
             )
         except Exception as e:
-            await ctx.send(chat.error("Unable to resolve IP: {}".format(e)))
-            return
-        async with ctx.channel.typing():
-            try:
-                status = await server.async_status()
-            except OSError as e:
-                await ctx.send(chat.error("Unable to get server's status: {}".format(e)))
-                return
-            except AsyncTimeoutError:
-                await ctx.send(chat.error("Unable to get server's status: Timed out"))
-                return
-        icon_file = None
-        icon = (
-            discord.File(
-                icon_file := BytesIO(base64.b64decode(status.favicon.split(",", 1)[1])),
-                filename="icon.png",
-            )
-            if status.favicon
-            else None
-        )
+            # await ctx.send(chat.error("Unable to resolve IP: {}".format(e)))
+            error_embed.title = "Unable to resolve IP: {}".format(e)
+            return error_embed
+        # async with ctx.channel.typing():
+        try:
+            status = await server.async_status()    
+        except OSError as e:
+            # await ctx.send(chat.error("Unable to get server's status: {}".format(e)))
+            error_embed.title = "Unable to get server's status: {}".format(e)
+            return error_embed
+        except AsyncTimeoutError:
+            # await ctx.send(chat.error("Unable to get server's status: Timed out"))
+            error_embed.title = "Unable to get server's status: Timed out"
+            return error_embed
+        
         embed = discord.Embed(
             title=f"{server.host}:{server.port}",
             description=chat.box(await self.clear_mcformatting(status.description)),
-            color=await ctx.embed_color(),
+            color=discord.Colour(0x00ff00),
         )
-        if icon:
-            embed.set_thumbnail(url="attachment://icon.png")
         embed.add_field(name="Latency", value=f"{status.latency} ms")
         embed.add_field(
             name="Version",
@@ -84,29 +128,7 @@ class Minecraft(commands.Cog):
             ),
             inline=False
         )
-        await ctx.send(file=icon, embed=embed)
-        if icon_file:
-            icon_file.close()
-        # TODO: for some reason, producing `OSError: [WinError 10038]` on current version of lib
-        # not tested further
-        # if query_data:  # Optional[bool]
-        #     try:
-        #         query = await server.async_query()
-        #     except OSError as e:
-        #         embed.set_footer(text=chat.error(_("Unable to get query data: {}").format(e)))
-        #         await msg.edit(embed=embed)
-        #         return
-        #     except AsyncTimeoutError:
-        #         embed.set_footer(text=chat.error(_("Unable to get query data: Timed out.")))
-        #         await msg.edit(embed=embed)
-        #         return
-        #     embed.add_field(name=_("World"), value=f"{query.map}")
-        #     embed.add_field(
-        #         name=_("Software"),
-        #         value=_("{}\nVersion: {}").format(query.software.brand, query.software.version)
-        #         # f"Plugins: {query.software.plugins}"
-        #     )
-        #     await msg.edit(embed=embed)
+        return embed
 
     async def clear_mcformatting(self, formatted_str) -> str:
         """Remove Minecraft-formatting"""
